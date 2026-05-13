@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "next lint",
+    "lint:fix": "eslint app --fix",
+    "typecheck": "tsc --noEmit",
+    "check:all": "pnpm typecheck && pnpm lint:fix",
     "db:migrate": "node scripts/turso-migrate.mjs"
   },
   "dependencies": {
