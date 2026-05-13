@@ -30,7 +30,12 @@ export async function GET(
     });
 
     // 4. Faz o redirecionamento permanente (308) para a URL de destino
-    return NextResponse.redirect(link.url, 308);
+    const destination = new URL(link.url);
+    if (destination.protocol !== "http:" && destination.protocol !== "https:") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    return NextResponse.redirect(destination, 308);
   } catch (error) {
     console.error("Erro ao redirecionar:", error);
     return NextResponse.redirect(new URL("/", request.url));

@@ -5,9 +5,18 @@ import prisma from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
 const shortLinkSchema = z.object({
-  url: z.url("URL inválida."),
+  url: z.url("URL inválida.").refine((value) => {
+    try {
+      const { protocol } = new URL(value);
+      return protocol === "http:" || protocol === "https:";
+    } catch {
+      return false;
+    }
+  }, "Apenas URLs http/https."),
   slug: z
     .string()
+    .min(3, "Slug muito curto.")
+    .max(32, "Slug muito longo.")
     .regex(/^[a-z0-9-]+$/, "Apenas letras minúsculas, números e hifens.")
     .optional()
     .or(z.literal("")),
