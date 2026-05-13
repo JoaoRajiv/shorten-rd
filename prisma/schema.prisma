@@ -1,0 +1,31 @@
+generator client {
+  provider        = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  // Um usuário pode ter vários links
+  links     ShortLink[] 
+}
+
+model ShortLink {
+  id        String   @id @default(cuid())
+  url       String
+  slug      String   @unique
+  clicks    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([slug])
+}
+
