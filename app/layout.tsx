@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "./_components/ui/tooltip";
+import { Analytics } from "@vercel/analytics/next";
 
 const font = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
           <TooltipProvider>{children}</TooltipProvider>
         </ClerkProvider>
         <Toaster />
+        <Analytics />
       </body>
     </html>
   );

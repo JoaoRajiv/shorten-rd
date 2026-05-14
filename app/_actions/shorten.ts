@@ -33,7 +33,6 @@ export async function createShortLink(
   formData: FormData,
 ): Promise<ActionResponse> {
   try {
-    // 1. Verificação de Autenticação na Borda
     const { userId: clerkId } = await auth();
     const user = await currentUser();
 
@@ -41,7 +40,6 @@ export async function createShortLink(
       return { success: false, message: "Acesso negado. Faça login." };
     }
 
-    // 2. Validação dos dados do formulário
     const data = Object.fromEntries(formData.entries());
     const parsed = shortLinkSchema.safeParse(data);
 
@@ -52,7 +50,6 @@ export async function createShortLink(
     const { url, slug } = parsed.data;
     const finalSlug = slug || Math.random().toString(36).substring(2, 8);
 
-    // 3. Verifica duplicidade do Slug
     const existingSlug = await prisma.shortLink.findUnique({
       where: { slug: finalSlug },
     });
