@@ -19,8 +19,8 @@ const shortLinkSchema = z.object({
     .min(3, {
       message: "O slug personalizado deve ter no mínimo 3 caracteres.",
     })
-    .regex(/^[a-zA-Z0-9-]+$/, {
-      message: "O slug só pode conter letras, números e hifens.",
+    .regex(/^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$/, {
+      message: "O slug deve começar e terminar com letra ou número, e só conter letras, números e hifens.",
     })
     .optional()
     .or(z.literal("")), // Permite string vazia caso o input seja submetido sem preenchimento

@@ -16,15 +16,30 @@ model User {
 }
 
 model ShortLink {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   url       String
-  slug      String   @unique
-  clicks    Int      @default(0)
-  createdAt DateTime @default(now())
+  slug      String       @unique
+  clicks    Int          @default(0)
+  createdAt DateTime     @default(now())
 
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User         @relation(fields: [userId], references: [id])
+
+  clickEvents ClickEvent[]
 
   @@index([slug])
+  @@index([userId])
+}
+
+model ClickEvent {
+  id        String   @id @default(cuid())
+  linkId    String
+  link      ShortLink @relation(fields: [linkId], references: [id])
+  timestamp DateTime @default(now())
+  referrer  String?
+  userAgent String?
+
+  @@index([linkId])
+  @@index([timestamp])
 }
 

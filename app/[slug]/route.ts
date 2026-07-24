@@ -3,41 +3,44 @@ import prisma from "@/lib/prisma";
 
 export async function GET(
   request: Request,
-  // No Next.js mais recente, os params são Promises e devem ser desestruturados assim:
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
 
-  if (!slug) {
+  if (!slug || !/^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$/.test(slug)) {
     return new NextResponse("Not Found", { status: 404 });
   }
 
   try {
-    // 1. Busca o link original no banco
     const link = await prisma.shortLink.findUnique({
       where: { slug },
     });
 
-    // 2. Se o link não existir, joga o usuário de volta para a página inicial
     if (!link) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return new NextResponse("Not Found", { status: 404 });
     }
 
-    // 3. Incrementa o contador de cliques (Roda em background)
-    await prisma.shortLink.update({
+    // Fire-and-forget: não bloqueia o redirect
+    prisma.shortLink.update({
       where: { id: link.id },
       data: { clicks: { increment: 1 } },
-    });
+    }).catch(() => {});
+    prisma.clickEvent.create({
+      data: {
+        linkId: link.id,
+        referrer: request.headers.get("referer"),
+        userAgent: request.headers.get("user-agent"),
+      },
+    }).catch(() => {});
 
-    // 4. Faz o redirecionamento permanente (308) para a URL de destino
     const destination = new URL(link.url);
     if (destination.protocol !== "http:" && destination.protocol !== "https:") {
-      return NextResponse.redirect(new URL("/", request.url));
+      return new NextResponse("Not Found", { status: 404 });
     }
 
     return NextResponse.redirect(destination, 308);
   } catch (error) {
     console.error("Erro ao redirecionar:", error);
-    return NextResponse.redirect(new URL("/", request.url));
+    return new NextResponse("Not Found", { status: 404 });
   }
 }

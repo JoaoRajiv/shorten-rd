@@ -7,8 +7,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get("secret");
 
-  // Troque "rajiv-admin-123" por uma senha da sua escolha
-  if (secret !== "rajiv-admin-123") {
+  if (secret !== process.env.ADMIN_SECRET) {
     return NextResponse.json({ error: "Acesso negado." }, { status: 401 });
   }
 

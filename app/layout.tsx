@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${font.variable} h-full antialiased`}>
-      <body className={`${font.variable} antialiased`}>
+      <body>
         <ClerkProvider>
           <TooltipProvider>{children}</TooltipProvider>
         </ClerkProvider>

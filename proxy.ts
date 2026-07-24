@@ -9,7 +9,7 @@ const isPublicRoute = createRouteMatcher([
 
 const isShortSlugRoute = (req: Request) => {
   const { pathname } = new URL(req.url);
-  return /^\/[a-z0-9-]+$/.test(pathname);
+  return /^\/[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(pathname) && pathname !== "/dashboard";
 };
 
 export default clerkMiddleware(async (auth, req) => {
